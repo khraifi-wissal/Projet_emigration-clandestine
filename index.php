@@ -1,3 +1,63 @@
+
+
+<?php
+// login_process.php
+
+session_start();
+require 'connexion.php';
+
+// Vérification si les données POST sont bien présentes
+if (!isset($_POST['email']) || !isset($_POST['password'])) {
+    // Si l'accès est direct sans formulaire, on redirige vers le login.
+    header("Location: admin_login.php");
+    exit;
+}
+
+$email = trim($_POST['email']);
+$password = $_POST['password']; // Le mot de passe non haché
+
+// Requête sécurisée avec Prepared Statements
+$sql = "SELECT admin_id, username, password FROM admins WHERE email = ?";
+$req = $conn->prepare($sql);
+
+if ($req === false) {
+    // Erreur de base de données
+    header("Location: admin_login.php?error=db_error");
+    exit;
+}
+
+$req->bind_param("s", $email);
+$req->execute();
+$result = $req->get_result();
+
+if ($result->num_rows === 1) {
+    $admin = $result->fetch_assoc();
+
+    // 🔑 VÉRIFICATION DU MOT DE PASSE HACHÉ
+    if (password_verify($password, $admin['password'])) {
+        
+        // --- SUCCÈS : Création de la session ---
+        $_SESSION['admin_id'] = $admin['admin_id'];
+        $_SESSION['admin_username'] = $admin['username'];
+        
+        // Mettre à jour last_login (Bonne pratique)
+        $update_sql = "UPDATE admins SET last_login = NOW() WHERE admin_id = ?";
+        $update_req = $conn->prepare($update_sql);
+        $update_req->bind_param("i", $admin['admin_id']);
+        $update_req->execute();
+
+        // Redirection vers le dashboard
+        header("Location: index.php");
+        exit;
+    }
+}
+
+// --- ÉCHEC : Si l'email n'est pas trouvé ou le mot de passe est faux ---
+// Redirection vers la page de connexion avec le paramètre d'erreur
+header("Location: admin_login.php?error=1");
+exit;
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -48,7 +108,7 @@
                 </li>
 
                 <li>
-                    <a href="gestion_quiz.php">
+                    <a href="gerer_quiz_complet.php">
                         <span class="icon">
                             <ion-icon name="help-circle-outline"></ion-icon>
                         </span>
@@ -74,7 +134,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="gestion_brochures.php">
+                    <a href="">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -83,7 +143,7 @@
                 </li>
 
                 <li>
-                    <a href="admin_login.php">
+                    <a href="admin_login.html">
                         <span class="icon">
                             <ion-icon name="sign-out"></ion-icon>
                         </span>
