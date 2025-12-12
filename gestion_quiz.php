@@ -113,7 +113,7 @@ if ($result) {
                 </li>
                 
                 <li>
-                    <a href="#">
+                    <a href="">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -122,7 +122,7 @@ if ($result) {
                 </li>
                 
                 <li>
-                    <a href="#">
+                    <a href="">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
