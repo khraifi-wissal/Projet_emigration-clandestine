@@ -9,7 +9,8 @@ include 'connexion.php';
 $message = '';
 // Utiliser $_SESSION['admin_member_id'] si la session est gérée, sinon garder la valeur par défaut pour le test.
 // ATTENTION : L'ID 1 DOIT exister dans votre table 'members' pour que ce code fonctionne.
-$created_by_member_id = $_SESSION['member_id'] ?? 18; // ID de l'admin (membre) postant l'histoire.
+$created_by_member_id = $_SESSION['member_id'] ?? 18
+; // ID de l'admin (membre) postant l'histoire.
 
 
 // --- A. TRAITEMENT DU CHANGEMENT DE STATUT (ACCEPTER/REJETER) ---
