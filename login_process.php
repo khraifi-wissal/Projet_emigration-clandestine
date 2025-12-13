@@ -1,15 +1,19 @@
 <?php
 session_start();
-require 'connexion.php';
+require "connexion.php";
 
-$email = $_POST['email'];
-$password = $_POST['password'];
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
-$sql = "SELECT * FROM admins WHERE email = ?";
-$req = $conn->prepare($sql);
-$req->bind_param("s", $email);
-$req->execute();
-$result = $req->get_result();
+if ($email === '' || $password === '') {
+    header("Location: admin_login.php?error=1");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT admin_id, username, password FROM admins WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $admin = $result->fetch_assoc();
@@ -17,11 +21,10 @@ if ($result->num_rows === 1) {
     if (password_verify($password, $admin['password'])) {
         $_SESSION['admin_id'] = $admin['admin_id'];
         $_SESSION['admin_username'] = $admin['username'];
-
         header("Location: index.php");
         exit;
     }
 }
 
-header("Location: index.php?error=1");
-?>
+header("Location: admin_login.php?error=1");
+exit;

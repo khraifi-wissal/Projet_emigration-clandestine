@@ -4,6 +4,7 @@
 require 'connexion.php'; 
 
 $message = '';
+$created_by_admin_id = 1; 
 
 // --- 1. TRAITEMENT DE L'AJOUT D'UNE NOUVELLE BROCHURE (UPLOAD POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_brochure'])) {

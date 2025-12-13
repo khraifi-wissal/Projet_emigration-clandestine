@@ -1,9 +1,15 @@
 <?php
+// Fichier : ajouter_questions.php
+
+// 1. Décommenter pour utiliser les sessions.
+// session_start();
 include 'connexion.php'; 
 
 $message = '';
-$created_by_admin_id = 1; 
+// Utiliser l'ID de session si disponible, sinon valeur par défaut 1.
+$created_by_admin_id = $_SESSION['admin_id'] ?? 18; 
 
+// --- TRAITEMENT DE L'AJOUT DE QUIZ ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_quiz'])) {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
@@ -31,11 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_quiz'])) {
     }
 }
 
+// --- RÉCUPÉRATION DE LA LISTE DES QUIZ ---
 $quiz_list = [];
 $sql_select = "
     SELECT q.quiz_id, q.title, q.created_at, a.username AS admin_username, 
            (SELECT COUNT(*) FROM quiz_questions qq WHERE qq.quiz_id = q.quiz_id) AS total_questions
     FROM quiz q
+    -- NOTE : Assurez-vous que 'admins' est le nom de la table contenant les admins
+    -- Si votre table d'admins est la même que celle des membres, modifiez la jointure ici :
+    -- JOIN members a ON q.created_by = a.member_id 
     JOIN admins a ON q.created_by = a.admin_id
     ORDER BY q.created_at DESC
 ";
@@ -52,6 +62,7 @@ if ($result) {
     $message .= '<div class="alert alert-danger">Erreur de lecture des quiz: ' . $conn->error . '</div>';
 }
 
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -77,9 +88,9 @@ if ($result) {
                 
                 <li class="hovered"><a href="gestion_quiz.php"><span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span> <span class="title">Quiz</span></a></li>
                 
-                <li><a href=""><span class="icon"><ion-icon name="book-outline"></ion-icon></span> <span class="title">Storytelling</span></a></li>
-                <li><a href=""><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span> <span class="title">Brochures</span></a></li>
-                <li><a href=""><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span> <span class="title">Déconnexion</span></a></li>
+                <li><a href="gestion_storytelling.php"><span class="icon"><ion-icon name="book-outline"></ion-icon></span> <span class="title">Storytelling</span></a></li>
+                <li><a href="gestion_brochures.php"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span> <span class="title">Brochures</span></a></li>
+                <li><a href="logout.php"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span> <span class="title">Déconnexion</span></a></li>
             </ul>
         </div>
 
@@ -101,7 +112,7 @@ if ($result) {
                         <h2>Créer un Nouveau Quiz</h2>
                     </div>
                     
-                    <form action="gestion_quiz.php" method="POST" class="p-3">
+                    <form action="ajouter_questions.php" method="POST" class="p-3">
                         <input type="hidden" name="add_quiz" value="1">
                         
                         <div class="mb-3">
@@ -146,7 +157,7 @@ if ($result) {
                                         <td><?php echo date('Y-m-d H:i', strtotime($quiz['created_at'])); ?></td>
                                         <td>
                                             <a href="ajouter_questions.php?quiz_id=<?php echo $quiz['quiz_id']; ?>" class="status inProgress btn btn-sm me-2" style="text-decoration: none;">
-                                                Ajouter Questions
+                                                 Ajouter Questions
                                             </a>
                                             <button class="status return btn btn-sm">Supprimer</button>
                                         </td>

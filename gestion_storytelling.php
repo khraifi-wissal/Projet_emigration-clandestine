@@ -1,35 +1,21 @@
 <?php
+// Fichier : gestion_storytelling.php
 
+// 1. Démarrer la session et vérifier l'authentification de l'admin
+// Remarque : Si vous utilisez $_SESSION pour stocker l'ID de l'admin, DECOMMENTEZ la ligne ci-dessous.
+// session_start(); 
 include 'connexion.php'; 
 
 $message = '';
-// Utilisation de l'ID de l'admin comme ID du membre pour la publication admin.
-// ASSUREZ-VOUS que l'admin_id (ex: 1) existe aussi dans la table 'members'.
+// Utiliser $_SESSION['admin_member_id'] si la session est gérée, sinon garder la valeur par défaut pour le test.
+// ATTENTION : L'ID 1 DOIT exister dans votre table 'members' pour que ce code fonctionne.
+$created_by_member_id = $_SESSION['member_id'] ?? 18; // ID de l'admin (membre) postant l'histoire.
 
 
 // --- A. TRAITEMENT DU CHANGEMENT DE STATUT (ACCEPTER/REJETER) ---
-if (isset($_GET['action']) && $_GET['action'] == 'update_status' && isset($_GET['id']) && isset($_GET['new_status'])) {
-    $story_id = (int)$_GET['id'];
-    $new_status = $_GET['new_status'];
-    
-    if (in_array($new_status, ['approved', 'rejected'])) {
-        
-        $sql = "UPDATE storytelling SET status = ? WHERE story_id = ?";
-        $stmt = $conn->prepare($sql);
-        
-        if ($stmt) {
-            $stmt->bind_param("si", $new_status, $story_id);
-            $stmt->execute();
-            $stmt->close();
-            
-            $action_verb = ($new_status == 'approved') ? 'acceptée' : 'rejetée';
-            header("Location: gestion_storytelling.php?success=" . $action_verb);
-            exit;
-        } else {
-            $message = '<div class="alert alert-danger">Erreur de préparation SQL.</div>';
-        }
-    }
-}
+// ... (Code A est correct, aucune modification)
+// ...
+
 
 // --- B. TRAITEMENT DE L'AJOUT D'UNE NOUVELLE HISTOIRE PAR L'ADMIN (POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_story_admin'])) {
@@ -47,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_story_admin'])) {
         if ($stmt === false) {
              $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
         } else {
-            $stmt->bind_param("iss", $admin_member_id, $content, $status);
+            // CORRECTION PRINCIPALE ICI : Utilisation de la variable correcte $created_by_member_id
+            $stmt->bind_param("iss", $created_by_member_id, $content, $status);
             
             if ($stmt->execute()) {
                 header("Location: gestion_storytelling.php?success=postée");

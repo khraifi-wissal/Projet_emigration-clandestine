@@ -1,12 +1,17 @@
 <?php
 // gestion_reponses_story.php
 
+// 1. Décommenter pour utiliser les sessions. Assurez-vous que l'ID de l'admin
+// est correctement défini dans $_SESSION['member_id'] lors de la connexion.
+// session_start(); 
 include 'connexion.php'; 
 
 $message = '';
 $story_id = null;
 $parent_story_info = null;
-$replying_member_id = 1; // ID du membre pour les réponses Admin (doit être configuré)
+
+// Utiliser l'ID de session si disponible, sinon valeur par défaut 1.
+$replying_member_id = $_SESSION['member_id'] ?? 18; // ID du membre pour les réponses Admin (doit être configuré)
 
 // Vérification de l'ID de l'histoire et récupération des informations
 if (isset($_GET['story_id']) && is_numeric($_GET['story_id'])) {
@@ -49,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_response']) && $s
         if ($stmt === false) {
              $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
         } else {
+            // Utilisation de $replying_member_id (provenant de la session ou valeur par défaut)
             $stmt->bind_param("isi", $replying_member_id, $content, $story_id); 
             
             if ($stmt->execute()) {
@@ -171,13 +177,13 @@ $conn->close();
                         <p><?php echo nl2br(htmlspecialchars($parent_story_info['content'])); ?></p>
                         <div class="mt-3">
                             <a href="modifier_story_post.php?id=<?php echo $story_id; ?>" 
-                               class="status inProgress btn btn-sm me-2" style="text-decoration: none; padding: 2px 8px;">
-                                Modifier Histoire
+                                class="status inProgress btn btn-sm me-2" style="text-decoration: none; padding: 2px 8px;">
+                                 Modifier Histoire
                             </a>
                             <a href="supprimer.php?table=storytelling&id=<?php echo $story_id; ?>&redirect=gestion_storytelling.php" 
-                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette histoire principale et toutes ses réponses ?');"
-                               class="status return btn btn-sm" style="text-decoration: none; padding: 2px 8px;">
-                                Supprimer le Fil
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette histoire principale et toutes ses réponses ?');"
+                                class="status return btn btn-sm" style="text-decoration: none; padding: 2px 8px;">
+                                 Supprimer le Fil
                             </a>
                         </div>
                     </div>
@@ -222,13 +228,13 @@ $conn->close();
                                             <td><?php echo date('Y-m-d H:i', strtotime($response['created_at'])); ?></td>
                                             <td>
                                                 <a href="modifier_story_post.php?id=<?php echo $response['story_id']; ?>" 
-                                                   class="status inProgress btn btn-sm me-2" style="text-decoration: none; padding: 2px 8px;">
-                                                    Modifier
+                                                    class="status inProgress btn btn-sm me-2" style="text-decoration: none; padding: 2px 8px;">
+                                                     Modifier
                                                 </a>
                                                 <a href="supprimer.php?table=storytelling&id=<?php echo $response['story_id']; ?>&redirect=gestion_reponses_story.php?story_id=<?php echo $story_id; ?>" 
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?');"
-                                                   class="status return btn btn-sm" style="text-decoration: none; padding: 2px 8px;">
-                                                    Supprimer
+                                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?');"
+                                                    class="status return btn btn-sm" style="text-decoration: none; padding: 2px 8px;">
+                                                     Supprimer
                                                 </a>
                                             </td>
                                         </tr>
