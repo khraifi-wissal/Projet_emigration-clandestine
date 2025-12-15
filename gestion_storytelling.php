@@ -21,6 +21,7 @@ $created_by_member_id = $_SESSION['member_id'] ?? 18
 // --- B. TRAITEMENT DE L'AJOUT D'UNE NOUVELLE HISTOIRE PAR L'ADMIN (POST) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_story_admin'])) {
     $content = trim($_POST['content']);
+    
 
     if (empty($content)) {
         $message = '<div class="alert alert-danger">Veuillez entrer le contenu de l\'histoire.</div>';
