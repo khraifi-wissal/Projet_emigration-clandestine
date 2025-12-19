@@ -1,8 +1,10 @@
 <?php
-include 'connexion.php'; 
+// On inclut la connexion qui utilise PDO
+require_once 'connexion.php'; 
 
 $message = '';
 
+// --- AJOUT D'UN MEMBRE ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_member'])) {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
@@ -11,48 +13,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_member'])) {
     if (empty($username) || empty($email) || empty($password)) {
         $message = '<div class="alert alert-danger">Veuillez remplir tous les champs.</div>';
     } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        try {
+            // Hachage du mot de passe (Sécurité)
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO members (username, email, password) VALUES (?, ?, ?)";
-        
-        $stmt = $conn->prepare($sql);
-        
-        if ($stmt === false) {
-             $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-        } else {
-            $stmt->bind_param("sss", $username, $email, $hashed_password);
+            // Requête avec PDO
+            $sql = "INSERT INTO members (username, email, password) VALUES (:username, :email, :password)";
+            $stmt = $conn->prepare($sql);
             
-            if ($stmt->execute()) {
-                $message = '<div class="alert alert-success">Membre <b>' . htmlspecialchars($username) . '</b> ajouté avec succès!</div>';
+            $stmt->execute([
+                ':username' => $username,
+                ':email'    => $email,
+                ':password' => $hashed_password
+            ]);
+
+            $message = '<div class="alert alert-success">Membre <b>' . htmlspecialchars($username) . '</b> ajouté avec succès!</div>';
+        } catch (PDOException $e) {
+            // Gestion de l'erreur d'email en double (Duplicate entry)
+            if ($e->getCode() == 23000) { 
+                $message = '<div class="alert alert-danger">Erreur : L\'email existe déjà.</div>';
             } else {
-                if ($conn->errno == 1062) { 
-                     $message = '<div class="alert alert-danger">Erreur : L\'email existe déjà dans la base de données.</div>';
-                } else {
-                     $message = '<div class="alert alert-danger">Erreur lors de l\'ajout du membre: ' . $conn->error . '</div>';
-                }
+                $message = '<div class="alert alert-danger">Erreur lors de l\'ajout: ' . $e->getMessage() . '</div>';
             }
-            $stmt->close();
         }
     }
 }
 
+// --- LECTURE DES MEMBRES ---
 $members = [];
-$sql_select = "SELECT member_id, username, email, created_at, last_login FROM members ORDER BY created_at DESC";
-$result = $conn->query($sql_select);
+try {
+    $sql_select = "SELECT member_id, username, email, created_at, last_login FROM members ORDER BY created_at DESC";
+    
+    // En PDO, on utilise query() pour les SELECT simples
+    $stmt_select = $conn->query($sql_select);
+    
+    // fetchAll remplace la boucle while + fetch_assoc + num_rows
+    $members = $stmt_select->fetchAll(PDO::FETCH_ASSOC);
 
-if ($result) {
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $members[] = $row;
-        }
-    }
-    $result->free();
-} else {
-    $message .= '<div class="alert alert-danger">Erreur de lecture des membres: ' . $conn->error . '</div>';
+} catch (PDOException $e) {
+    $message .= '<div class="alert alert-danger">Erreur de lecture : ' . $e->getMessage() . '</div>';
 }
 
-$conn->close();
-
+// Note : Avec PDO, la connexion se ferme automatiquement, pas besoin de $conn->close()
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -61,14 +63,11 @@ $conn->close();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Membres - Nafas Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css"> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
     
 </head>
 
 <body>
-
-    
         <div class="navigation">
             <ul>
                 <li>
@@ -105,7 +104,7 @@ $conn->close();
                 </li>
 
                 <li>
-                    <a href="gestion_quiz.php">
+                    <a href="gerer_quiz_complet.php">
                         <span class="icon">
                             <ion-icon name="help-circle-outline"></ion-icon>
                         </span>
@@ -114,7 +113,7 @@ $conn->close();
                 </li>
                 
                 <li>
-                    <a href="">
+                    <a href="gestion_storytelling.php">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -123,7 +122,7 @@ $conn->close();
                 </li>
                 
                 <li>
-                    <a href="">
+                    <a href="gestion_brochures.php">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -132,7 +131,7 @@ $conn->close();
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="logout.php">
                         <span class="icon">
                             <ion-icon name="sign-out"></ion-icon>
                         </span>
@@ -141,12 +140,8 @@ $conn->close();
                 </li>
             </ul>
         </div>
+        
         <div class="main">
-            <div class="topbar">
-                <div class="toggle"><ion-icon name="menu-outline"></ion-icon></div>
-                <div class="user"><img src="image.png" alt=""></div>
-            </div>
-
             <div class="details p-3 p-md-5">
 
                 <h1 class="mb-4" style="color: var(--blue);">Gestion des Membres</h1>

@@ -1,24 +1,21 @@
 <?php
-// Inclusion du fichier de connexion (MySQLi)
-include 'connexion.php'; 
+// Utilisation de require pour assurer la présence de la connexion PDO
+require_once 'connexion.php'; 
 
 $message = '';
 $created_by_admin_id = 1; 
 
-// Récupération du quiz_id depuis l'URL (si l'on veut ajouter des questions à un quiz existant)
+// Récupération du quiz_id depuis l'URL
 $quiz_id_to_manage = isset($_GET['quiz_id']) && is_numeric($_GET['quiz_id']) ? (int)$_GET['quiz_id'] : null;
 $quiz_info = null;
 
 // --- 1. FONCTIONS DE TRAITEMENT ---
 
 function check_quiz_existence($conn, $id) {
+    // Version PDO : prepare -> execute -> fetch
     $stmt = $conn->prepare("SELECT quiz_id, title, content FROM quiz WHERE quiz_id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $info = $result->fetch_assoc();
-    $stmt->close();
-    return $info;
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 // Traitement de l'ajout d'une nouvelle question
@@ -31,118 +28,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_question'])) {
     $option_d = trim($_POST['option_d']);
     $correct_option = $_POST['correct_option'];
 
-    // Validation des options (au moins A et B)
     if (empty($question_text) || empty($option_a) || empty($option_b) || empty($correct_option)) {
-        $message = '<div class="alert alert-danger">Veuillez remplir le texte de la question, au moins les options A et B, et la bonne option.</div>';
+        $message = '<div class="alert alert-danger">Veuillez remplir les champs obligatoires.</div>';
     } else {
-        // Insertion dans la table quiz_questions
-        $sql = "INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_option) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        
-        if ($stmt === false) {
-             $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-        } else {
-            $stmt->bind_param("issssss", $current_quiz_id, $question_text, $option_a, $option_b, $option_c, $option_d, $correct_option);
+        try {
+            $sql = "INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_option) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$current_quiz_id, $question_text, $option_a, $option_b, $option_c, $option_d, $correct_option]);
             
-            if ($stmt->execute()) {
-                $message = '<div class="alert alert-success">Question ajoutée avec succès!</div>';
-            } else {
-                $message = '<div class="alert alert-danger">Erreur lors de l\'ajout de la question: ' . $conn->error . '</div>';
-            }
-            $stmt->close();
+            $message = '<div class="alert alert-success">Question ajoutée avec succès!</div>';
+        } catch (PDOException $e) {
+            $message = '<div class="alert alert-danger">Erreur : ' . $e->getMessage() . '</div>';
         }
     }
 }
 
-
-// Traitement de l'ajout d'un nouveau quiz (et redirection pour ajouter les questions)
+// Traitement de l'ajout d'un nouveau quiz
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_quiz'])) {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
 
     if (empty($title) || empty($content)) {
-        $message = '<div class="alert alert-danger">Veuillez remplir le Titre et la Description du Quiz.</div>';
+        $message = '<div class="alert alert-danger">Veuillez remplir le Titre et la Description.</div>';
     } else {
-        // Insertion dans la table quiz
-        $sql = "INSERT INTO quiz (title, content, created_by) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        
-        if ($stmt === false) {
-             $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-        } else {
-            $stmt->bind_param("ssi", $title, $content, $created_by_admin_id);
+        try {
+            $sql = "INSERT INTO quiz (title, content, created_by) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$title, $content, $created_by_admin_id]);
             
-            if ($stmt->execute()) {
-                $last_quiz_id = $conn->insert_id;
-                // Redirection vers cette même page pour ajouter les questions
-                header("Location: gerer_quiz_complet.php?quiz_id=" . $last_quiz_id . "&success=1");
-                exit;
-            } else {
-                $message = '<div class="alert alert-danger">Erreur lors de la création du quiz: ' . $conn->error . '</div>';
-            }
-            $stmt->close();
+            $last_quiz_id = $conn->lastInsertId();
+            header("Location: gerer_quiz_complet.php?quiz_id=" . $last_quiz_id . "&success=1");
+            exit;
+        } catch (PDOException $e) {
+            $message = '<div class="alert alert-danger">Erreur : ' . $e->getMessage() . '</div>';
         }
     }
 }
 
-
 // --- 2. LOGIQUE D'AFFICHAGE ---
 
-// Si un quiz_id est fourni, charger ses infos et ses questions
 if ($quiz_id_to_manage) {
     $quiz_info = check_quiz_existence($conn, $quiz_id_to_manage);
     
     // Charger les questions existantes
     $questions = [];
-    $sql_select = "
-        SELECT question_id, question_text, option_a, option_b, option_c, option_d, correct_option 
-        FROM quiz_questions 
-        WHERE quiz_id = ?
-        ORDER BY question_id ASC
-    ";
-    $stmt_select = $conn->prepare($sql_select);
-    $stmt_select->bind_param("i", $quiz_id_to_manage);
-    $stmt_select->execute();
-    $result_questions = $stmt_select->get_result();
-
-    if ($result_questions) {
-        while($row = $result_questions->fetch_assoc()) {
-            $questions[] = $row;
-        }
-        $result_questions->free();
+    try {
+        $sql_select = "SELECT * FROM quiz_questions WHERE quiz_id = ? ORDER BY question_id ASC";
+        $stmt_select = $conn->prepare($sql_select);
+        $stmt_select->execute([$quiz_id_to_manage]);
+        $questions = $stmt_select->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $message .= "Erreur questions : " . $e->getMessage();
     }
-    $stmt_select->close();
     
-    // Message de succès après la création
     if (isset($_GET['success']) && $_GET['success'] == 1) {
-         $message = '<div class="alert alert-success">Quiz créé avec succès. Vous pouvez maintenant ajouter les questions!</div>';
+         $message = '<div class="alert alert-success">Quiz créé avec succès!</div>';
     }
-
 } else {
-    // Si aucun quiz_id n'est fourni, charger la liste des quiz pour que l'admin choisisse
     $quiz_list = [];
-    $sql_select = "
-        SELECT q.quiz_id, q.title, q.created_at, a.username AS admin_username, 
-               (SELECT COUNT(*) FROM quiz_questions qq WHERE qq.quiz_id = q.quiz_id) AS total_questions
-        FROM quiz q
-        JOIN admins a ON q.created_by = a.admin_id
-        ORDER BY q.created_at DESC
-    ";
-    $result = $conn->query($sql_select);
-
-    if ($result) {
-        while($row = $result->fetch_assoc()) {
-            $quiz_list[] = $row;
-        }
-        $result->free();
+    try {
+        $sql_select = "
+            SELECT q.quiz_id, q.title, q.created_at, a.username AS admin_username, 
+                   (SELECT COUNT(*) FROM quiz_questions qq WHERE qq.quiz_id = q.quiz_id) AS total_questions
+            FROM quiz q
+            JOIN admins a ON q.created_by = a.admin_id
+            ORDER BY q.created_at DESC
+        ";
+        $stmt_list = $conn->query($sql_select);
+        $quiz_list = $stmt_list->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        $message .= "Erreur liste : " . $e->getMessage();
     }
 }
-
-
-$conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>

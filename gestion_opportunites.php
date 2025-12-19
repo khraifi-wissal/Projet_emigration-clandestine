@@ -1,8 +1,10 @@
 <?php
-include 'connexion.php'; 
+// On utilise require pour être sûr que le fichier est là
+require_once 'connexion.php'; 
 
 $message = '';
 
+// --- AJOUT D'UNE OPPORTUNITÉ ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_opp'])) {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
@@ -10,80 +12,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_opp'])) {
     $region = trim($_POST['region']);
     $link = trim($_POST['link']); 
     
-  
     $created_by_admin_id = 1; 
 
     if (empty($title) || empty($description) || empty($category) || empty($link)) {
-        $message = '<div class="alert alert-danger">Veuillez remplir tous les champs obligatoires (Titre, Description, Catégorie, Lien).</div>';
+        $message = '<div class="alert alert-danger">Veuillez remplir tous les champs obligatoires.</div>';
     } else {
         $allowed_categories = ['formation', 'emploi', 'stage', 'projet'];
         if (!in_array($category, $allowed_categories)) {
             $message = '<div class="alert alert-danger">Catégorie non valide.</div>';
         } else {
-
-            $sql = "INSERT INTO opportunities (title, description, category, region, created_by, link) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
-            
-            $stmt = $conn->prepare($sql);
-            
-            if ($stmt === false) {
-                 $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-            } else {
-                $stmt->bind_param("ssssis", $title, $description, $category, $region, $created_by_admin_id, $link);
+            try {
+                // Syntaxe PDO avec des marqueurs nommés (plus clair)
+                $sql = "INSERT INTO opportunities (title, description, category, region, created_by, link) 
+                        VALUES (:title, :description, :category, :region, :created_by, :link)";
                 
-                if ($stmt->execute()) {
-                    $message = '<div class="alert alert-success">Opportunité "<b>' . htmlspecialchars($title) . '</b>" publiée avec succès!</div>';
-                } else {
-                    $message = '<div class="alert alert-danger">Erreur lors de l\'ajout de l\'opportunité: ' . $conn->error . '</div>';
-                }
-                $stmt->close();
+                $stmt = $conn->prepare($sql);
+                
+                $stmt->execute([
+                    ':title'       => $title,
+                    ':description' => $description,
+                    ':category'    => $category,
+                    ':region'      => $region,
+                    ':created_by'  => $created_by_admin_id,
+                    ':link'        => $link
+                ]);
+
+                $message = '<div class="alert alert-success">Opportunité "<b>' . htmlspecialchars($title) . '</b>" publiée avec succès!</div>';
+            } catch (PDOException $e) {
+                $message = '<div class="alert alert-danger">Erreur lors de l\'ajout : ' . $e->getMessage() . '</div>';
             }
         }
     }
 }
 
+// --- LECTURE DES OPPORTUNITÉS ---
 $opportunities = [];
-$sql_select = "
-    SELECT o.opp_id, o.title, o.description, o.category, o.region, o.created_at, o.link, a.username AS admin_username
-    FROM opportunities o
-    JOIN admins a ON o.created_by = a.admin_id
-    ORDER BY o.created_at DESC
-";
-$result = $conn->query($sql_select);
+try {
+    $sql_select = "
+        SELECT o.opp_id, o.title, o.description, o.category, o.region, o.created_at, o.link, a.username AS admin_username
+        FROM opportunities o
+        JOIN admins a ON o.created_by = a.admin_id
+        ORDER BY o.created_at DESC
+    ";
+    
+    // En PDO, on utilise query() et fetchAll()
+    $stmt_select = $conn->query($sql_select);
+    $opportunities = $stmt_select->fetchAll(PDO::FETCH_ASSOC);
 
-if ($result) {
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $opportunities[] = $row;
-        }
-    }
-    $result->free();
-} else {
-    $message .= '<div class="alert alert-danger">Erreur de lecture des opportunités: ' . $conn->error . '</div>';
+} catch (PDOException $e) {
+    $message .= '<div class="alert alert-danger">Erreur de lecture : ' . $e->getMessage() . '</div>';
 }
 
-$conn->close();
+// Note : En PDO, on ne ferme pas la connexion manuellement avec $conn->close(). 
+// Elle se ferme toute seule à la fin du script.
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Opportunités - Nafas Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css"> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des Opportunités - Nafas Admin</title>
+<link rel="stylesheet" href="assets/css/style.css"> 
 </head>
 
 <body>
     
-<div class="navigation">
-
+    <div class="navigation">
             <ul>
                 <li>
                     <a href="#">
-        
                         <span class="title">Nafas</span>
                     </a>
                 </li>

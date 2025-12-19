@@ -6,59 +6,47 @@ require 'connexion.php';
 $message = '';
 $created_by_admin_id = 1; 
 
-// --- 1. TRAITEMENT DE L'AJOUT D'UNE NOUVELLE BROCHURE (UPLOAD POST) ---
+// --- 1. TRAITEMENT DE L'AJOUT D'UNE NOUVELLE BROCHURE ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_brochure'])) {
     $title = trim($_POST['title']);
-    $file = $_FILES['brochure_file']; // Récupération du tableau de fichiers
+    $file = $_FILES['brochure_file']; 
 
     if (empty($title) || $file['error'] != UPLOAD_ERR_OK) {
         $message = '<div class="alert alert-danger">Veuillez fournir un titre et sélectionner un fichier valide.</div>';
     } else {
         
-        // 🛑 CORRECTION ICI : Utilisation du chemin absolu pour le déplacement du fichier
-        // Le chemin absolu assure que move_uploaded_file trouve le dossier.
         $upload_dir_relative = 'uploads/brochures/'; 
         $upload_dir_absolute = __DIR__ . '/' . $upload_dir_relative;
         
         $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        // Créer un nom unique et sécurisé
         $new_filename = uniqid('brochure_', true) . '.' . $file_extension;
         $target_file_absolute = $upload_dir_absolute . $new_filename;
-        
-        // Le chemin pour la base de données doit rester relatif pour l'accès web
         $file_path_db = $upload_dir_relative . $new_filename;
 
-        // Vérification du type MIME du fichier (sécurité)
+        // Vérification du type MIME (sécurité)
         $allowed_mime_types = ['application/pdf', 'image/jpeg', 'image/png']; 
         if (!in_array(mime_content_type($file['tmp_name']), $allowed_mime_types)) {
             $message = '<div class="alert alert-danger">Type de fichier non autorisé. Seuls PDF, JPG et PNG sont permis.</div>';
         } else {
-            // Tenter de déplacer le fichier temporaire vers le dossier permanent
-            // On utilise $target_file_absolute
             if (move_uploaded_file($file['tmp_name'], $target_file_absolute)) {
                 
-                // Insertion dans la table brochures
-                $sql = "INSERT INTO brochures (title, file_path, created_by) VALUES (?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                
-                if ($stmt === false) {
-                     $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-                } else {
-                    // On insère le chemin relatif dans la BDD
-                    $stmt->bind_param("ssi", $title, $file_path_db, $created_by_admin_id);
+                try {
+                    // --- SYNTAXE PDO POUR L'INSERTION ---
+                    $sql = "INSERT INTO brochures (title, file_path, created_by) VALUES (?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
                     
-                    if ($stmt->execute()) {
+                    if ($stmt->execute([$title, $file_path_db, $created_by_admin_id])) {
                         header("Location: gestion_brochures.php?success=added");
                         exit;
                     } else {
-                        $message = '<div class="alert alert-danger">Erreur lors de l\'ajout de la brochure: ' . $conn->error . '</div>';
+                        $message = '<div class="alert alert-danger">Erreur lors de l\'ajout en base de données.</div>';
                     }
-                    $stmt->close();
+                } catch (PDOException $e) {
+                    $message = '<div class="alert alert-danger">Erreur SQL : ' . $e->getMessage() . '</div>';
                 }
 
             } else {
-                // Cette erreur signifie un problème de permission ou le dossier n'existe pas
-                $message = '<div class="alert alert-danger">Erreur lors du déplacement du fichier. Avez-vous créé le dossier "uploads/brochures/" et vérifié ses permissions?</div>';
+                $message = '<div class="alert alert-danger">Erreur lors du déplacement du fichier. Vérifiez le dossier "uploads/brochures/".</div>';
             }
         }
     }
@@ -66,21 +54,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_brochure'])) {
 
 // --- 2. RÉCUPÉRATION DES BROCHURES EXISTANTES ---
 $brochures = [];
-$sql_select = "
-    SELECT b.brochure_id, b.title, b.file_path, b.created_at, a.username AS admin_username
-    FROM brochures b
-    JOIN admins a ON b.created_by = a.admin_id
-    ORDER BY b.created_at DESC
-";
-$result = $conn->query($sql_select);
-
-if ($result) {
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $brochures[] = $row;
-        }
-    }
-    $result->free();
+try {
+    $sql_select = "
+        SELECT b.brochure_id, b.title, b.file_path, b.created_at, a.username AS admin_username
+        FROM brochures b
+        JOIN admins a ON b.created_by = a.admin_id
+        ORDER BY b.created_at DESC
+    ";
+    
+    // --- SYNTAXE PDO POUR LA LECTURE ---
+    $stmt_select = $conn->query($sql_select);
+    $brochures = $stmt_select->fetchAll(PDO::FETCH_ASSOC); 
+    // fetchAll remplace num_rows et la boucle while manuelle
+} catch (PDOException $e) {
+    $message .= '<div class="alert alert-danger">Erreur de lecture : ' . $e->getMessage() . '</div>';
 }
 
 // --- 3. GESTION DES MESSAGES DE STATUT ---
@@ -94,7 +81,7 @@ if (isset($_GET['success'])) {
     $message = '<div class="alert alert-danger">Erreur lors de la suppression de la brochure.</div>';
 }
 
-$conn->close();
+// Avec PDO, pas besoin de $conn->close(), la connexion se ferme à la fin du script.
 ?>
 
 <!DOCTYPE html>
@@ -105,7 +92,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Brochures - Nafas Admin</title>
     <link rel="stylesheet" href="assets/css/style.css"> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -127,11 +113,6 @@ $conn->close();
         </div>
 
         <div class="main">
-            <div class="topbar">
-                <div class="toggle"><ion-icon name="menu-outline"></ion-icon></div>
-                <div class="search"><label><input type="text" placeholder="Rechercher..."><ion-icon name="search-outline"></ion-icon></label></div>
-                <div class="user"><img src="image.png" alt=""></div>
-            </div>
 
             <div class="details p-3 p-md-5">
 

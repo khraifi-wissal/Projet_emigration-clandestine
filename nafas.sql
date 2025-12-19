@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 13 déc. 2025 à 11:35
+-- Généré le : ven. 19 déc. 2025 à 19:22
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -102,7 +102,9 @@ CREATE TABLE `members` (
 
 INSERT INTO `members` (`member_id`, `username`, `email`, `password`, `created_at`, `last_login`) VALUES
 (18, 'ahmed', 'ahmed@gmail.com', '$2y$10$03JuZ8O16MJTePKVaZBow.MeOtQCclho0pdehrCU8HZoSPbEFk6my', '2025-12-13 10:35:44', NULL),
-(19, 'roua', 'roua@gmail.com', '$2y$10$YIeY91aN171o/3HJ2Dg9Ye/axRytm/O3VhBBzOmKWWU/8RQHOpC7G', '2025-12-13 10:37:21', NULL);
+(19, 'roua', 'roua@gmail.com', '$2y$10$YIeY91aN171o/3HJ2Dg9Ye/axRytm/O3VhBBzOmKWWU/8RQHOpC7G', '2025-12-13 10:37:21', NULL),
+(22, 'hela', 'hela@gmail.com', '$2y$10$L8gnemcjWJ9Ch892Dz3G4.bie9V/SqZlxVMb4s5tVy6PZlio3ufJq', '2025-12-19 18:54:25', NULL),
+(24, 'imen', 'imen@gmail.com', '$2y$10$PCP.PxqQrSFDKpXt8A0WJeYdoj5EBLi3i5mYkfXEo/g23AWtJ0a4u', '2025-12-19 18:55:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -193,6 +195,28 @@ CREATE TABLE `quiz_responses` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `sensibilisation`
+--
+
+CREATE TABLE `sensibilisation` (
+  `id` int(11) NOT NULL,
+  `titre` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `date_publication` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `sensibilisation`
+--
+
+INSERT INTO `sensibilisation` (`id`, `titre`, `description`, `image_path`, `created_by`, `date_publication`) VALUES
+(5, '1. Les Facteurs de Départ', 'Crise Économique : L\'inflation galopante, la baisse du pouvoir d\'achat et le chômage des jeunes (qui dépasse souvent 35-40% dans certaines régions intérieures).\r\n\r\nLe \"Blocage\" Social : Le sentiment que l\'ascenseur social est en panne. Même avec un diplôme, l\'accès à un emploi digne semble impossible sans \"piston\".\r\n\r\nLa Pression des Pairs : Le succès apparent de ceux qui ont réussi à partir et qui renvoient une image de richesse (voitures, argent, vêtements) via les réseaux sociaux.', 'uploads/sensibilisation/sensi_admin_1766168466.jpg', 1, '2025-12-19 18:21:06');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `storytelling`
 --
 
@@ -204,6 +228,16 @@ CREATE TABLE `storytelling` (
   `created_at` datetime DEFAULT current_timestamp(),
   `status` enum('pending','approved','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `storytelling`
+--
+
+INSERT INTO `storytelling` (`story_id`, `member_id`, `content`, `parent_id`, `created_at`, `status`) VALUES
+(27, 22, '\"Voici mon histoire...\"', NULL, '2025-12-19 19:03:09', 'approved'),
+(28, 19, 'Quand j’étais encore étudiant à la Faculté de Tunis, je pensais que mon master en économie serait ma clé pour ouvrir les portes du monde. Je me voyais dans un bureau, une cravate droite, rendant ma mère fière dans notre quartier d\'Ettadhamen.', NULL, '2025-12-19 19:06:28', 'approved'),
+(29, 18, 'Aujourd\'hui, quand on me demande ce que je fais, je baisse les yeux. Je n\'ai pas atteint l\'autre rive ; les gardes-côtes nous ont interceptés à l\'aube.', 28, '2025-12-19 19:07:11', 'approved'),
+(30, 18, 'c\'est triste', 27, '2025-12-19 19:13:49', 'approved');
 
 --
 -- Index pour les tables déchargées
@@ -267,6 +301,13 @@ ALTER TABLE `quiz_responses`
   ADD KEY `question_id` (`question_id`);
 
 --
+-- Index pour la table `sensibilisation`
+--
+ALTER TABLE `sensibilisation`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_sensibilisation_admin` (`created_by`);
+
+--
 -- Index pour la table `storytelling`
 --
 ALTER TABLE `storytelling`
@@ -300,7 +341,7 @@ ALTER TABLE `encouragements`
 -- AUTO_INCREMENT pour la table `members`
 --
 ALTER TABLE `members`
-  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `member_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT pour la table `opportunities`
@@ -327,10 +368,16 @@ ALTER TABLE `quiz_responses`
   MODIFY `response_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `sensibilisation`
+--
+ALTER TABLE `sensibilisation`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT pour la table `storytelling`
 --
 ALTER TABLE `storytelling`
-  MODIFY `story_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `story_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Contraintes pour les tables déchargées
@@ -372,6 +419,12 @@ ALTER TABLE `quiz_questions`
 ALTER TABLE `quiz_responses`
   ADD CONSTRAINT `quiz_responses_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `quiz_responses_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`question_id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `sensibilisation`
+--
+ALTER TABLE `sensibilisation`
+  ADD CONSTRAINT `fk_sensibilisation_admin` FOREIGN KEY (`created_by`) REFERENCES `admins` (`admin_id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `storytelling`

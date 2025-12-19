@@ -3,7 +3,7 @@ session_start();
 require_once 'connexion.php'; 
 
 $message = '';
-$current_admin_member_id = $_SESSION['member_id'] ?? 22; 
+$current_admin_member_id = $_SESSION['member_id'] ?? 18; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     try {
@@ -39,108 +39,156 @@ if (isset($_GET['msg'])) {
 $sql = "SELECT s.*, m.username FROM storytelling s JOIN members m ON s.member_id = m.member_id WHERE s.parent_id IS NULL ORDER BY s.created_at DESC";
 $stories = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration Storytelling - Nafas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        :root {
-            --color-primary: #1C79B4;
-            --color-dark-bg: #00446A;
-            --color-text-dark: #333;
-            --color-light-bg: #f4f4f9;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--color-light-bg);
-            color: var(--color-text-dark);
-        }
-
-        .admin-header {
-            background-color: var(--color-dark-bg);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 40px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .member-story-card {
-            background: white;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            transition: transform 0.3s ease;
-        }
-
-        .member-story-card:hover { transform: translateY(-5px); }
-
-        .card-header-custom {
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            padding: 15px 25px;
-            border-radius: 15px 15px 0 0 !important;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .author-name { color: var(--color-primary); font-weight: 600; font-size: 1.1rem; }
-
-        .btn-primary-nafas {
-            background-color: var(--color-primary);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-primary-nafas:hover { background-color: var(--color-dark-bg); transform: scale(1.05); }
-
-        .admin-reply-box {
-            background-color: #F0F7FF;
-            border-left: 5px solid var(--color-primary);
-            padding: 15px;
-            margin-left: 40px;
-            border-radius: 0 10px 10px 0;
-            margin-top: 15px;
-            position: relative;
-        }
-
-        .admin-reply-box::before {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--color-primary);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .modal-content { border-radius: 20px; border: none; }
-        .modal-header { background-color: var(--color-primary); color: white; border-radius: 20px 20px 0 0; }
-
-        .alert-success { border: none; background-color: #d1e7dd; color: #0f5132; border-radius: 10px; font-weight: 600; }
-    </style>
+    <title>Nafas Admin Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css"> 
 </head>
+
 <body>
-
-    <header class="admin-header">
-        <div class="container">
-            <h1 class="fw-bold">Gestion des échanges Storytelling</h1>
-            <p class="opacity-75">Modérez les témoignages et engagez le dialogue avec la jeunesse.</p>
-        </div>
-    </header>
-
     <div class="container">
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a href="#">
+        
+                        <span class="title">Nafas</span>
+                    </a>
+                </li>
+
+                <li class="hovered">
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="home-outline"></ion-icon>
+                        </span>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="gestion_membres.php">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">Membres</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gestion_opportunites.php">
+                        <span class="icon">
+                            <ion-icon name="briefcase-outline"></ion-icon>
+                        </span>
+                        <span class="title">Opportunités</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gerer_quiz_complet.php">
+                        <span class="icon">
+                            <ion-icon name="help-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quiz</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="gestion_storytelling.php">
+                        <span class="icon">
+                            <ion-icon name="book-outline"></ion-icon>
+                        </span>
+                        <span class="title">Storytelling</span>
+                    </a>
+                </li>
+
+                 <li>
+                    <a href="">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">contenus</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">Brochures</span>
+                    </a>
+                </li>
+
+                <li>
+    <a href="admin_login.php">
+        <span class="icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </span>
+        <span class="title">Déconnexion</span>
+    </a>
+</li>
+
+            </ul>
+        </div>
+
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                <div class="user">
+                    <img src="image.png" alt=""> 
+                </div>
+            </div>
+
+            <div class="cardBox">
+                
+                <div class="card">
+                    <div>
+                        <div class="numbers">0</div> <div class="cardName">Total Membres </div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">0</div> <div class="cardName">Opportunités Publiées</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="briefcase-outline"></ion-icon>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">0</div> <div class="cardName">Réponses Quiz Soumises</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="bulb-outline"></ion-icon>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="numbers">0</div> <div class="cardName">Histoires Publiées</div>
+                    </div>
+
+                    <div class="iconBx">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                    </div>
+                </div>
+            </div>
+
+    <div class="details">
         <?php echo $message; ?>
 
         <div class="row justify-content-center">

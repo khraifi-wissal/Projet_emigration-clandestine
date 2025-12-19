@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: admin_login.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -66,7 +74,7 @@
                 </li>
 
                  <li>
-                    <a href="">
+                    <a href="admin_sensibilisation.php">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -83,7 +91,7 @@
                 </li>
 
                 <li>
-    <a href="logout.php">
+    <a href="admin_login.php">
         <span class="icon">
             <ion-icon name="log-out-outline"></ion-icon>
         </span>
