@@ -344,7 +344,7 @@ if ($isLoggedIn && isset($conn)) {
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="Asset 1.png" alt="Logo Nafas" height="45"> 
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -390,9 +390,7 @@ if ($isLoggedIn && isset($conn)) {
     <header class="hero-section">
         <div class="hero-overlay"></div>
         <div class="hero-content reveal">
-            <span class="d-inline-flex align-items-center gap-2 bg-dark bg-opacity-50 border border-danger text-danger px-3 py-1 rounded-pill mb-4 fs-6 fw-bold">
-                <i class="fas fa-exclamation-circle"></i> Réalité & Prévention
-            </span>
+        <br><br><br><br><br><br><br><br>
             
             <h1 class="hero-title">Face à la Mer,<br>Face à la Réalité</h1>
             
@@ -452,10 +450,10 @@ if ($isLoggedIn && isset($conn)) {
                                         </div>
                                     </div>
                                     <div class="ms-auto">
-                                        <button class="btn-read-more">
-                                            Lire la suite <i class="fas fa-arrow-right ms-2"></i>
-                                        </button>
-                                    </div>
+    <a href="article_details.php?id=<?= $row['id'] ?>" class="btn-read-more" style="text-decoration: none;">
+        Lire la suite <i class="fas fa-arrow-right ms-2"></i>
+    </a>
+</div>
                                 </div>
                             </div>
                         </div>
@@ -502,7 +500,7 @@ if ($isLoggedIn && isset($conn)) {
             <div class="row g-4">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="Asset 1.png" alt="Nafas" height="30" class="me-2" >
+                        <img src="logo-nafas.png" alt="Nafas" height="30" class="me-2" >
                     </div>
                     <p class="text-white-50">
                         Une plateforme dédiée à la jeunesse tunisienne. Nous croyons que ta réussite est possible ici, chez toi.

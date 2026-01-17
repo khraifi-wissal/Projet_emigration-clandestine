@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container">
     <div class="card shadow-lg">
         <div class="card-body p-4">
-            <h3 class="text-center mb-4">Administration</h3>
+            <h3 class="text-center mb-4" style="color:#0f172a ;">Administration</h3>
 
             <?php if ($error): ?>
                 <div class="alert alert-danger text-center py-2"><?php echo $error; ?></div>
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label">Mot de passe</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Accéder au Dashboard</button>
+                <button type="submit" style="width:100% ;background-color:#0f172a ;color:white;height:40px; border-radius:5px;">Accéder au Dashboard</button>
             </form>
         </div>
     </div>

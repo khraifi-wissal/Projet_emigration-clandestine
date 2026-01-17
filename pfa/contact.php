@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="Asset 1.png" alt="Logo Nafas" height="45"> 
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -476,7 +476,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row g-4">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="Asset 1.png" alt="Nafas" height="30" class="me-2">
+                        <img src="logo-nafas.png" alt="Nafas" height="30" class="me-2">
                     </div>
                     <p class="text-white-50">
                         Une plateforme dédiée à la jeunesse tunisienne. Nous croyons que ta réussite est possible ici, chez toi.

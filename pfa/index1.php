@@ -221,7 +221,7 @@ if (isset($_SESSION["member_id"])) {
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="Asset 1.png" alt="Logo Nafas" height="45"> 
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -382,7 +382,7 @@ if (isset($_SESSION["member_id"])) {
                     <div class="card glass-card h-100 p-4 border-primary border-opacity-25">
                         <div class="card-body text-start">
                             <div class="d-inline-block mb-4">
-                                <img src="https://cdn-icons-png.flaticon.com/512/3976/3976625.png" width="64" height="64" alt="Formation">
+                                <img src="formation.jpg" width="450" height="200" alt="Formation">
                             </div>
                             <h3 class="fw-bold mb-3">Pôle Formation</h3>
                             <ul class="list-unstyled text-muted mb-4">
@@ -399,9 +399,9 @@ if (isset($_SESSION["member_id"])) {
                     <div class="card glass-card h-100 p-4">
                         <div class="card-body text-start">
                             <div class="d-inline-block mb-4">
-                                <img src="https://cdn-icons-png.flaticon.com/512/9464/9464675.png" width="64" height="64" alt="Entrepreneur">
+                                <img src="social.jpeg" width="450" height="200" alt="Entrepreneur">
                             </div>
-                            <h3 class="fw-bold mb-3">Esprit Entrepreneurial</h3>
+                            <h3 class="fw-bold mb-3">l'Impact Social</h3>
                             <ul class="list-unstyled text-muted mb-4">
                                 <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Investissement local</li>
                                 <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Mythes et réalités</li>
@@ -458,7 +458,7 @@ if (isset($_SESSION["member_id"])) {
             <div class="row g-4">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none mb-3">
-                        <img src="Asset 1.png" alt="Nafas" height="35" class="me-2" >
+                        <img src="logo-nafas.png" alt="Nafas" height="35" class="me-2" >
                     </a>
                     <p class="text-white-50">
                         Une plateforme dédiée à la jeunesse tunisienne, offrant des alternatives concrètes et un espace d'expression pour construire un avenir meilleur, ici.

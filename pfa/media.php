@@ -148,7 +148,7 @@ $result_brochures = mysqli_query($conn, $query_brochures);
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="Asset 1.png" alt="Logo Nafas" height="45"> 
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -253,7 +253,7 @@ $result_brochures = mysqli_query($conn, $query_brochures);
             <div class="row g-4">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="Asset 1.png" alt="Nafas" height="30" class="me-2">
+                        <img src="logo-nafas.png" alt="Nafas" height="30" class="me-2">
                         
                     </div>
                     <p class="text-white-50">

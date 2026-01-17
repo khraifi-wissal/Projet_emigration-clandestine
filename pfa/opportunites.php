@@ -377,7 +377,7 @@ function getCategoryThumb($cat) {
  <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="Asset 1.png" alt="Logo Nafas" height="45"> 
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -581,7 +581,7 @@ function getCategoryThumb($cat) {
             <div class="row g-4">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <a href="#" class="d-flex align-items-center text-decoration-none mb-3">
-                        <img src="Asset 1.png" alt="Nafas" height="35" class="me-2">
+                        <img src="logo-nafas.png" alt="Nafas" height="35" class="me-2">
                     </a>
                     <p class="text-muted">
                         Une plateforme dédiée à la jeunesse tunisienne, offrant des alternatives concrètes et un espace d'expression pour construire un avenir meilleur, ici.

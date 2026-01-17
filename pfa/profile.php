@@ -257,9 +257,9 @@ $count_likes = count($liked_stories);
 <body>
 
     <aside class="sidebar" id="sidebar">
-        <a href="index1.php" class="sidebar-brand">
-            <img src="Asset 1.png" alt="Nafas" height="30"> 
-        </a>
+        <a class="navbar-brand" href="#">
+                <img src="logo-nafas.png" alt="Logo Nafas" height="45"> 
+            </a>
         
         <nav>
             <div class="small text-muted text-uppercase fw-bold mb-2 ps-3" style="font-size: 0.7rem;">Menu Principal</div>

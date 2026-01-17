@@ -4,6 +4,111 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: admin_login.php');
     exit();
 }
+
+// On inclut la connexion (qui utilise PDO d'après votre fichier gestion_membres.php)
+require_once 'connexion.php'; 
+
+$totalMembres = 0;
+
+try {
+    // Requête pour compter les membres
+    $queryMembres = $conn->query("SELECT COUNT(*) as total FROM members");
+    
+    // Correction de l'erreur : Utilisation de fetch() au lieu de fetch_assoc()
+    $row = $queryMembres->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        $totalMembres = $row['total'];
+    }
+} catch (PDOException $e) {
+    // En cas d'erreur (ex: table inexistante), on garde 0
+    $totalMembres = 0;
+
+    
+
+}
+
+$totalopp= 0;
+
+try {
+    // Requête pour compter les membres
+    $queryopp = $conn->query("SELECT COUNT(*) as total FROM opportunities");
+    
+    // Correction de l'erreur : Utilisation de fetch() au lieu de fetch_assoc()
+    $row = $queryopp->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        $totalopp = $row['total'];
+    }
+} catch (PDOException $e) {
+    // En cas d'erreur (ex: table inexistante), on garde 0
+    $totalopp = 0;
+
+    
+
+}
+
+$totalrep= 0;
+
+try {
+    // Requête pour compter les membres
+    $queryrep = $conn->query("SELECT COUNT(*) as total FROM quiz_responses");
+    
+    // Correction de l'erreur : Utilisation de fetch() au lieu de fetch_assoc()
+    $row = $queryrep->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        $totalrep = $row['total'];
+    }
+} catch (PDOException $e) {
+    // En cas d'erreur (ex: table inexistante), on garde 0
+    $totalrep = 0;
+
+    
+
+}
+
+$totalhist= 0;
+
+try {
+    // Requête pour compter les membres
+    $queryhist = $conn->query("SELECT COUNT(*) as total FROM storytelling");
+    
+    // Correction de l'erreur : Utilisation de fetch() au lieu de fetch_assoc()
+    $row = $queryhist->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        $totalhist = $row['total'];
+    }
+} catch (PDOException $e) {
+    // En cas d'erreur (ex: table inexistante), on garde 0
+    $totalhist = 0;
+
+    
+
+}
+
+// --- RÉCUPÉRATION DES RÉCENTS MEMBRES ---
+$recents_members = [];
+try {
+    // On récupère les 5 derniers membres inscrits
+    $sql_recents = "SELECT username, email, created_at FROM members ORDER BY created_at DESC LIMIT 5";
+    $stmt_recents = $conn->query($sql_recents);
+    $recents_members = $stmt_recents->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $recents_members = [];
+}
+
+// --- RÉCUPÉRATION DES DERNIÈRES OPPORTUNITÉS ---
+$derniere_opps = [];
+try {
+    // On récupère les 4 dernières opportunités ajoutées
+    $sql_opps = "SELECT title, category FROM opportunities ORDER BY created_at DESC LIMIT 4";
+    $stmt_opps = $conn->query($sql_opps);
+    $derniere_opps = $stmt_opps->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $derniere_opps = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -489,84 +594,15 @@ if (!isset($_SESSION['admin_id'])) {
     <div class="container">
         <div class="navigation">
             <ul>
-                <li>
-                    <a href="#">
-                        
-                        <span class="title" style="font-size: 1.5em; font-weight: 700;">Nafas Admin</span>
-                    </a>
-                </li>
-
-                <li class="hovered">
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="gestion_membres.php">
-                        <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </span>
-                        <span class="title">Membres</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="gestion_opportunites.php">
-                        <span class="icon">
-                            <ion-icon name="briefcase-outline"></ion-icon>
-                        </span>
-                        <span class="title">Opportunités</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="gerer_quiz_complet.php">
-                        <span class="icon">
-                            <ion-icon name="help-circle-outline"></ion-icon>
-                        </span>
-                        <span class="title">Quiz</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="gestion_storytelling.php">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Storytelling</span>
-                    </a>
-                </li>
-
-                 <li>
-                    <a href="admin_sensibilisation.php">
-                        <span class="icon">
-                            <ion-icon name="document-text-outline"></ion-icon>
-                        </span>
-                        <span class="title">Contenus</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="">
-                        <span class="icon">
-                            <ion-icon name="folder-open-outline"></ion-icon>
-                        </span>
-                        <span class="title">Brochures</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="admin_login.php">
-                        <span class="icon">
-                            <ion-icon name="log-out-outline"></ion-icon>
-                        </span>
-                        <span class="title">Déconnexion</span>
-                    </a>
-                </li>
-
+                <li><a href="#"><span class="title" style="font-weight: 700; font-size: 1.2rem;">Nafas</span></a></li>
+                <li><a href="index.php"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="title">Dashboard</span></a></li>
+                <li><a href="gestion_membres.php"><span class="icon"><ion-icon name="people-outline"></ion-icon></span><span class="title">Membres</span></a></li>
+                <li><a href="gestion_opportunites.php"><span class="icon"><ion-icon name="briefcase-outline"></ion-icon></span><span class="title">Opportunités</span></a></li>
+                <li><a href="gestion_quiz.php"><span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span><span class="title">Quiz</span></a></li>
+                <li><a href="gestion_storytelling.php"><span class="icon"><ion-icon name="book-outline"></ion-icon></span><span class="title">Storytelling</span></a></li>
+                <li class="hovered"><a href="admin_sensibilisation.php"><span class="icon"><ion-icon name="megaphone-outline"></ion-icon></span><span class="title">Contenus</span></a></li>
+                <li><a href="gestion_brochures.php"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span><span class="title">Brochures</span></a></li>
+                <li><a href="admin_login.php"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="title">Déconnexion</span></a></li>
             </ul>
         </div>
 
@@ -576,14 +612,14 @@ if (!isset($_SESSION['admin_id'])) {
                     <ion-icon name="menu-outline"></ion-icon>
                 </div>
                 <div class="user">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin"> 
+                    <img src="admin.jpg" alt="Admin"> 
                 </div>
             </div>
 
             <div class="cardBox">
                 <div class="card">
                     <div>
-                        <div class="numbers">0</div> 
+                        <div class="numbers"><?php echo $totalMembres; ?></div> 
                         <div class="cardName">Total Membres</div>
                     </div>
                     <div class="iconBx">
@@ -593,7 +629,7 @@ if (!isset($_SESSION['admin_id'])) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">0</div> 
+                        <div class="numbers"><?php echo $totalopp; ?></div> 
                         <div class="cardName">Opportunités</div>
                     </div>
                     <div class="iconBx">
@@ -603,7 +639,7 @@ if (!isset($_SESSION['admin_id'])) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">0</div> 
+                        <div class="numbers"><?php echo $totalrep; ?></div> 
                         <div class="cardName">Réponses Quiz</div>
                     </div>
                     <div class="iconBx">
@@ -613,7 +649,7 @@ if (!isset($_SESSION['admin_id'])) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">0</div> 
+                        <div class="numbers"><?php echo $totalhist; ?></div> 
                         <div class="cardName">Histoires</div>
                     </div>
                     <div class="iconBx">
@@ -626,7 +662,7 @@ if (!isset($_SESSION['admin_id'])) {
                 <div class="recentOrders">
                     <div class="cardHeader">
                         <h2>Récents Membres</h2>
-                        <a href="#" class="btn">Voir Tout</a>
+                        <a href="gestion_membres.php" class="btn">Voir Tout</a>
                     </div>
 
                     <table>
@@ -640,68 +676,49 @@ if (!isset($_SESSION['admin_id'])) {
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td> 
-                            </tr>
-
-                            <tr>
-                                <td>Fatima Ali</td>
-                                <td>f.ali@mail.com</td>
-                                <td>2025-11-28</td>
-                                <td><span class="status pending">Inactif</span></td>
-                            </tr>
-
-                            <tr>
-                                <td>Mehdi B.</td>
-                                <td>mehdi.b@mail.com</td>
-                                <td>2025-11-20</td>
-                                <td><span class="status delivered">Actif</span></td>
-                            </tr>
-                            
-                            <tr>
-                                <td>Samira</td>
-                                <td>samira@mail.com</td>
-                                <td>2025-11-15</td>
-                                <td><span class="status return">Bloqué</span></td>
-                            </tr>
-                        </tbody>
+    <?php if (!empty($recents_members)): ?>
+        <?php foreach ($recents_members as $member): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($member['username']); ?></td>
+                <td><?php echo htmlspecialchars($member['email']); ?></td>
+                <td><?php echo date('d/m/Y', strtotime($member['created_at'])); ?></td>
+                <td><span class="status delivered">Actif</span></td> 
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="4" style="text-align: center;">Aucun membre trouvé.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
                     </table>
                 </div>
 
                 <div class="recentCustomers">
-                    <div class="cardHeader">
-                        <h2>Dernières Opportunités</h2>
-                    </div>
+    <div class="cardHeader">
+        <h2>Les Opportunités</h2>
+        <a href="gestion_opportunites.php" class="btn">Voir Tout</a>
+    </div>
 
-                    <table>
-                        <tr>
-                            <td>
-                                <h4>Formation DevOps <br> <span>Catégorie: Formation</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <h4>Offre Emploi Senior <br> <span>Catégorie: Emploi</span></h4>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <h4>Stage d'Été RH <br> <span>Catégorie: Stage</span></h4>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                                <h4>Projet Open Source <br> <span>Catégorie: Projet</span></h4>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+    <table>
+        <?php if (!empty($derniere_opps)): ?>
+            <?php foreach ($derniere_opps as $opp): ?>
+                <tr>
+                    <td>
+                        <h4>
+                            <?php echo htmlspecialchars($opp['title']); ?> <br> 
+                            <span>Catégorie: <?php echo ucfirst(htmlspecialchars($opp['category'])); ?></span>
+                        </h4>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td><h4>Aucune opportunité disponible.</h4></td>
+            </tr>
+        <?php endif; ?>
+    </table>
+</div>
             </div>
         </div>
     </div>

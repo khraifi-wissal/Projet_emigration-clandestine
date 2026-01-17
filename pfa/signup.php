@@ -55,7 +55,7 @@ if (isset($_POST['signup'])) {
     <title>S'inscrire - Nafas</title>
     <style>
         :root { 
-            --primary: #4F46E5; 
+            --primary: #0F766E; 
             --white: #ffffff; 
             --bezier: cubic-bezier(0.65, 0, 0.35, 1);
             --img-url: url('Untitled-4.jpg');

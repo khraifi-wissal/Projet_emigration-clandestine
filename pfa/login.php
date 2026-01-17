@@ -44,7 +44,7 @@ if (isset($_POST['login'])) {
     <title>Connexion - Nafas</title>
     <style>
         :root { 
-            --primary: #4F46E5; 
+            --primary: #0F766E; 
             --primary-hover: #4338ca;
             --white: #ffffff; 
             --bezier: cubic-bezier(0.65, 0, 0.35, 1);
