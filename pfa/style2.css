@@ -1,0 +1,84 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #0c4c71;
+}
+
+.brochure-container, .opp-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.brochure-card, .opp-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.pdf-full, .pdf-limited {
+    width: 100%;
+    height: 300px;
+    border: none;
+}
+
+.pdf-preview {
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.blur-text {
+    color: #555;
+    filter: blur(3px);
+}
+
+.btn {
+    display: inline-block;
+    background: #1C79B4;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.btn.disabled {
+    background: #aaa;
+    pointer-events: none;
+}
+
+.filters {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.filters input, .filters select {
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.connect {
+    display: block;
+    width: fit-content;
+    margin: 30px auto;
+}

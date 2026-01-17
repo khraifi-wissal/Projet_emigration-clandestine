@@ -2,9 +2,9 @@
 include 'connexion.php'; 
 
 $message = '';
-
 $created_by_admin_id = 1; 
 
+// --- 1. AJOUT D'UN QUIZ ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_quiz'])) {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
@@ -12,44 +12,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_quiz'])) {
     if (empty($title) || empty($content)) {
         $message = '<div class="alert alert-danger">Veuillez remplir le Titre et le Contenu du Quiz.</div>';
     } else {
-        $sql = "INSERT INTO quiz (title, content, created_by) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        
-        if ($stmt === false) {
-             $message = '<div class="alert alert-danger">Erreur de préparation: ' . $conn->error . '</div>';
-        } else {
-            $stmt->bind_param("ssi", $title, $content, $created_by_admin_id);
+        try {
+            $sql = "INSERT INTO quiz (title, content, created_by) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
             
-            if ($stmt->execute()) {
-                $last_quiz_id = $conn->insert_id;
+            // En PDO, on execute avec un tableau de paramètres (plus simple que bind_param)
+            if ($stmt->execute([$title, $content, $created_by_admin_id])) {
+                $last_quiz_id = $conn->lastInsertId(); // Équivalent de $conn->insert_id
                 $message = '<div class="alert alert-success">Quiz "<b>' . htmlspecialchars($title) . '</b>" créé avec succès! <a href="ajouter_questions.php?quiz_id=' . $last_quiz_id . '" class="btn btn-sm btn-info ms-3">Ajouter des questions maintenant</a></div>';
-            } else {
-                $message = '<div class="alert alert-danger">Erreur lors de l\'ajout du quiz: ' . $conn->error . '</div>';
             }
-            $stmt->close();
+        } catch (PDOException $e) {
+            $message = '<div class="alert alert-danger">Erreur lors de l\'ajout du quiz: ' . $e->getMessage() . '</div>';
         }
     }
 }
 
+// --- 2. RÉCUPÉRATION DES QUIZ ---
 $quiz_list = [];
 $sql_select = "
     SELECT q.quiz_id, q.title, q.created_at, a.username AS admin_username, 
-           (SELECT COUNT(*) FROM quiz_questions qq WHERE qq.quiz_id = q.quiz_id) AS total_questions
+            (SELECT COUNT(*) FROM quiz_questions qq WHERE qq.quiz_id = q.quiz_id) AS total_questions
     FROM quiz q
     JOIN admins a ON q.created_by = a.admin_id
     ORDER BY q.created_at DESC
 ";
-$result = $conn->query($sql_select);
 
-if ($result) {
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $quiz_list[] = $row;
-        }
+try {
+    $result = $conn->query($sql_select);
+
+    if ($result) {
+        $quiz_list = $result->fetchAll(PDO::FETCH_ASSOC);
+        
     }
-    $result->free();
-} else {
-    $message .= '<div class="alert alert-danger">Erreur de lecture des quiz: ' . $conn->error . '</div>';
+} catch (PDOException $e) {
+    $message .= '<div class="alert alert-danger">Erreur de lecture des quiz: ' . $e->getMessage() . '</div>';
 }
 
 ?>
@@ -76,14 +72,14 @@ if ($result) {
                 </li>
 
                 <li class="hovered">
-                    <a href="#">
+                    <a href="index.php">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-
+                
                 <li>
                     <a href="gestion_membres.php">
                         <span class="icon">
@@ -112,16 +108,24 @@ if ($result) {
                 </li>
                 
                 <li>
-                    <a href="">
+                    <a href="gestion_storytelling.php">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
                         <span class="title">Storytelling</span>
                     </a>
                 </li>
-                
+
+                 <li>
+                    <a href="admin_sensibilisation.php">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">contenus</span>
+                    </a>
+                </li>
                 <li>
-                    <a href="">
+                    <a href="gestion_brochures.php">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -129,14 +133,15 @@ if ($result) {
                     </a>
                 </li>
 
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="sign-out"></ion-icon>
-                        </span>
-                        <span class="title">Déconnexion</span>
-                    </a>
-                </li>
+                <li>        
+    <a href="admin_login.php">
+        <span class="icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </span>
+        <span class="title">Déconnexion</span>
+    </a>
+</li>
+
             </ul>
         </div>
 

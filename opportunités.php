@@ -77,6 +77,9 @@ $categoryLabels = [
     'stage' => 'Stage',
     'projet' => 'Projet'
 ];
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">

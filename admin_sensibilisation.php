@@ -14,18 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
     
     // Dossier de stockage pour les images de sensibilisation
     $upload_dir = "uploads/sensibilisation/";
-    if (!is_dir($upload_dir)) { mkdir($upload_dir, 0777, true); }
+    if (!is_dir($upload_dir)) { mkdir($upload_dir, 0777, true); }//make directory
 
-    $file_ext = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+    $file_ext = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));//: Isole l'extension:pathinfo
     $filename = "sensi_admin_" . time() . "." . $file_ext;
-    $target_path = $upload_dir . $filename;
+    $target_path = $upload_dir . $filename;//nlas9ou l fichier fl dossier
 
     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_path)) {
         try {
             // L'ADMIN crée le contenu : insertion du created_by lié à la table admins
             $stmt = $conn->prepare("INSERT INTO sensibilisation (titre, description, image_path, created_by) VALUES (?, ?, ?, ?)");
             $stmt->execute([$titre, $description, $target_path, $admin_id]);
-            $message = '<div class="alert alert-success" style="margin-top:100px;">✅ Contenu de sensibilisation publié par l\'administration.</div>';
+            $message = '<div class="alert alert-success" style="margin-top:100px;"> Contenu de sensibilisation publié par l\'administration.</div>';
         } catch (PDOException $e) {
             $message = '<div class="alert alert-danger">Erreur SQL : ' . $e->getMessage() . '</div>';
         }

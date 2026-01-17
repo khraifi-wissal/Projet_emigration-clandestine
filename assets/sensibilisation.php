@@ -289,7 +289,7 @@ $sensibilisation_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <img src="<?php echo htmlspecialchars($row['image_path']); ?>" 
                              alt="<?php echo htmlspecialchars($row['titre']); ?>">
                     <?php else: ?>
-                        <img src="uploads/default-sensibilisation.jpg" 
+                        <img src="uploads\sensibilisation\sensi_admin_1766168466.jpg" 
                              alt="Image par défaut">
                     <?php endif; ?>
                 </div>

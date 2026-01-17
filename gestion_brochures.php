@@ -1,5 +1,5 @@
 <?php
-// gestion_brochures.php
+
 
 require 'connexion.php'; 
 
@@ -65,7 +65,7 @@ try {
     // --- SYNTAXE PDO POUR LA LECTURE ---
     $stmt_select = $conn->query($sql_select);
     $brochures = $stmt_select->fetchAll(PDO::FETCH_ASSOC); 
-    // fetchAll remplace num_rows et la boucle while manuelle
+    // fetchAll remplace num_rows et la boucle while manuelle 
 } catch (PDOException $e) {
     $message .= '<div class="alert alert-danger">Erreur de lecture : ' . $e->getMessage() . '</div>';
 }
@@ -97,18 +97,86 @@ if (isset($_GET['success'])) {
 <body>
     <div class="container">
     
-        <div class="navigation">
+       <div class="navigation">
             <ul>
-                <li><a href="index.php"><span class="icon"><ion-icon name="happy-outline"></ion-icon></span> <span class="title">Nafas</span></a></li>
-                <li><a href="index.php"><span class="icon"><ion-icon name="home-outline"></ion-icon></span> <span class="title">Dashboard</span></a></li>
-                <li><a href="gestion_membres.php"><span class="icon"><ion-icon name="people-outline"></ion-icon></span> <span class="title">Membres</span></a></li>
-                <li><a href="gestion_opportunites.php"><span class="icon"><ion-icon name="briefcase-outline"></ion-icon></span> <span class="title">Opportunités</span></a></li>
-                <li><a href="gerer_quiz_complet.php"><span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span> <span class="title">Quiz</span></a></li>
-                <li><a href="gestion_storytelling.php"><span class="icon"><ion-icon name="book-outline"></ion-icon></span> <span class="title">Storytelling</span></a></li>
+                <li>
+                    <a href="#">
+        
+                        <span class="title">Nafas</span>
+                    </a>
+                </li>
+
+                <li class="hovered">
+                    <a href="index.php">
+                        <span class="icon">
+                            <ion-icon name="home-outline"></ion-icon>
+                        </span>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li>
                 
-                <li class="hovered"><a href="gestion_brochures.php"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span> <span class="title">Brochures</span></a></li>
+                <li>
+                    <a href="gestion_membres.php">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">Membres</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gestion_opportunites.php">
+                        <span class="icon">
+                            <ion-icon name="briefcase-outline"></ion-icon>
+                        </span>
+                        <span class="title">Opportunités</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="gestion_quiz.php">
+                        <span class="icon">
+                            <ion-icon name="help-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">Quiz</span>
+                    </a>
+                </li>
                 
-                <li><a href="logout.php"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span> <span class="title">Déconnexion</span></a></li>
+                <li>
+                    <a href="gestion_storytelling.php">
+                        <span class="icon">
+                            <ion-icon name="book-outline"></ion-icon>
+                        </span>
+                        <span class="title">Storytelling</span>
+                    </a>
+                </li>
+
+                 <li>
+                    <a href="admin_sensibilisation.php">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">contenus</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="gestion_brochures.php">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">Brochures</span>
+                    </a>
+                </li>
+
+                <li>        
+    <a href="admin_login.php">
+        <span class="icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </span>
+        <span class="title">Déconnexion</span>
+    </a>
+</li>
+
             </ul>
         </div>
 

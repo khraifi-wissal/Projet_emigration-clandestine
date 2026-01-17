@@ -78,23 +78,24 @@ try {
 
 <body>
     
-    <div class="navigation">
+   <div class="navigation">
             <ul>
                 <li>
                     <a href="#">
+        
                         <span class="title">Nafas</span>
                     </a>
                 </li>
 
                 <li class="hovered">
-                    <a href="#">
+                    <a href="index.php">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-
+                
                 <li>
                     <a href="gestion_membres.php">
                         <span class="icon">
@@ -123,16 +124,24 @@ try {
                 </li>
                 
                 <li>
-                    <a href="">
+                    <a href="gestion_storytelling.php">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
                         <span class="title">Storytelling</span>
                     </a>
                 </li>
-                
+
+                 <li>
+                    <a href="admin_sensibilisation.php">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">contenus</span>
+                    </a>
+                </li>
                 <li>
-                    <a href="">
+                    <a href="gestion_brochures.php">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -140,16 +149,17 @@ try {
                     </a>
                 </li>
 
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="sign-out"></ion-icon>
-                        </span>
-                        <span class="title">Déconnexion</span>
-                    </a>
-                </li>
+                <li>        
+    <a href="admin_login.php">
+        <span class="icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </span>
+        <span class="title">Déconnexion</span>
+    </a>
+</li>
+
             </ul>
-</div>
+        </div>
 
 <div class="main">
   <div class="topbar">

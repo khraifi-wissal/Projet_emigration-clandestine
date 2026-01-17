@@ -1,10 +1,9 @@
 <?php
-// On inclut la connexion qui utilise PDO
+
 require_once 'connexion.php'; 
 
 $message = '';
 
-// --- AJOUT D'UN MEMBRE ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_member'])) {
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
@@ -17,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_member'])) {
             // Hachage du mot de passe (Sécurité)
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            // Requête avec PDO
             $sql = "INSERT INTO members (username, email, password) VALUES (:username, :email, :password)";
             $stmt = $conn->prepare($sql);
             
@@ -72,6 +70,7 @@ try {
             <ul>
                 <li>
                     <a href="#">
+        
                         <span class="title">Nafas</span>
                     </a>
                 </li>
@@ -84,7 +83,7 @@ try {
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-
+                
                 <li>
                     <a href="gestion_membres.php">
                         <span class="icon">
@@ -104,7 +103,7 @@ try {
                 </li>
 
                 <li>
-                    <a href="gerer_quiz_complet.php">
+                    <a href="gestion_quiz.php">
                         <span class="icon">
                             <ion-icon name="help-circle-outline"></ion-icon>
                         </span>
@@ -120,7 +119,15 @@ try {
                         <span class="title">Storytelling</span>
                     </a>
                 </li>
-                
+
+                 <li>
+                    <a href="admin_sensibilisation.php">
+                        <span class="icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </span>
+                        <span class="title">contenus</span>
+                    </a>
+                </li>
                 <li>
                     <a href="gestion_brochures.php">
                         <span class="icon">
@@ -130,14 +137,15 @@ try {
                     </a>
                 </li>
 
-                <li>
-                    <a href="logout.php">
-                        <span class="icon">
-                            <ion-icon name="sign-out"></ion-icon>
-                        </span>
-                        <span class="title">Déconnexion</span>
-                    </a>
-                </li>
+                <li>        
+    <a href="admin_login.php">
+        <span class="icon">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </span>
+        <span class="title">Déconnexion</span>
+    </a>
+</li>
+
             </ul>
         </div>
         

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'connexion.php'; // Vérifiez que ce fichier contient bien votre variable $pdo
+include 'connexion.php'; 
 
 $error = '';
 

@@ -148,7 +148,7 @@ $stories = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($stories as $s): ?>
                     <div class="member-story-card">
                         <div class="card-header-custom">
-                            <span class="author-name">👤 <?php echo htmlspecialchars($s['username']); ?></span>
+                            <span class="author-name"><?php echo htmlspecialchars($s['username']); ?></span>
                             <span class="badge rounded-pill bg-light text-dark shadow-sm">ID #<?php echo $s['story_id']; ?></span>
                         </div>
                         

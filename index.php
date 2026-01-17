@@ -29,7 +29,7 @@ if (!isset($_SESSION['admin_id'])) {
                 </li>
 
                 <li class="hovered">
-                    <a href="#">
+                    <a href="index.php">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -56,7 +56,7 @@ if (!isset($_SESSION['admin_id'])) {
                 </li>
 
                 <li>
-                    <a href="gerer_quiz_complet.php">
+                    <a href="gestion_quiz.php">
                         <span class="icon">
                             <ion-icon name="help-circle-outline"></ion-icon>
                         </span>
@@ -82,7 +82,7 @@ if (!isset($_SESSION['admin_id'])) {
                     </a>
                 </li>
                 <li>
-                    <a href="">
+                    <a href="gestion_brochures.php">
                         <span class="icon">
                             <ion-icon name="document-text-outline"></ion-icon>
                         </span>
@@ -90,7 +90,7 @@ if (!isset($_SESSION['admin_id'])) {
                     </a>
                 </li>
 
-                <li>
+                <li>        
     <a href="admin_login.php">
         <span class="icon">
             <ion-icon name="log-out-outline"></ion-icon>

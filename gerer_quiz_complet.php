@@ -1,24 +1,24 @@
 <?php
-// Utilisation de require pour assurer la présence de la connexion PDO
+
 require_once 'connexion.php'; 
 
 $message = '';
 $created_by_admin_id = 1; 
 
-// Récupération du quiz_id depuis l'URL
+
 $quiz_id_to_manage = isset($_GET['quiz_id']) && is_numeric($_GET['quiz_id']) ? (int)$_GET['quiz_id'] : null;
 $quiz_info = null;
 
-// --- 1. FONCTIONS DE TRAITEMENT ---
+
 
 function check_quiz_existence($conn, $id) {
-    // Version PDO : prepare -> execute -> fetch
+    
     $stmt = $conn->prepare("SELECT quiz_id, title, content FROM quiz WHERE quiz_id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Traitement de l'ajout d'une nouvelle question
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_question'])) {
     $current_quiz_id = (int)$_POST['current_quiz_id'];
     $question_text = trim($_POST['question_text']);
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_question'])) {
     }
 }
 
-// Traitement de l'ajout d'un nouveau quiz
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_quiz'])) {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
@@ -110,7 +110,7 @@ if ($quiz_id_to_manage) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Quiz - Nafas Admin</title>
     <link rel="stylesheet" href="assets/css/style.css"> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+   
 </head>
 
 <body>
