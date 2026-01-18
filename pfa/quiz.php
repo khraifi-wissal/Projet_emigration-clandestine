@@ -130,14 +130,17 @@ if ($selected_quiz_id > 0 && !$show_result) {
             <a class="navbar-brand" href="index1.php"><img src="logo-nafas.png" alt="Logo" height="45"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="index1.php">À Propos</a></li>
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center text-uppercase">
+                    <li class="nav-item"><a class="nav-link " href="index1.php" class="text-uppercase">À Propos</a></li>
                     <li class="nav-item"><a class="nav-link" href="sensibilisation.php">Sensibilisation</a></li>
-                    <li class="nav-item"><a class="nav-link" href="opportunites.php">Opportunités</a></li>
+                    <li class="nav-item"><a class="nav-link " href="opportunites.php">Opportunités</a></li>
                     <li class="nav-item"><a class="nav-link active" href="quiz.php">Quiz</a></li>
                     <li class="nav-item"><a class="nav-link" href="story_telling.php">Storytelling</a></li>
+                    <li class="nav-item"><a class="nav-link" href="media.php">Médias</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link" id="theme-toggle"><i class="fas fa-sun"></i></a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="theme-toggle"><i class="fas fa-sun"></i></a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <div class="dropdown">

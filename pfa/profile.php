@@ -262,13 +262,12 @@ $count_likes = count($liked_stories);
             </a>
         
         <nav>
-            <div class="small text-muted text-uppercase fw-bold mb-2 ps-3" style="font-size: 0.7rem;">Menu Principal</div>
             
+            <br><br><br>
             <button class="nav-link-custom active" onclick="showTab('dashboard', this)">
                 <i class="fas fa-th-large"></i> Tableau de bord
             </button>
 
-            <div class="small text-muted text-uppercase fw-bold mb-2 mt-4 ps-3" style="font-size: 0.7rem;">Ma Bibliothèque</div>
             
             <button class="nav-link-custom" onclick="showTab('favorites', this)">
                 <i class="fas fa-heart"></i> Mes Favoris
